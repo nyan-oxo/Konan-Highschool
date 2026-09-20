@@ -1567,7 +1567,7 @@ function showSelectedFiles() {
    連絡追加
 ================================== */
 
-function addNotice() {
+async function addNotice() {
 
   const title =
     document.getElementById(
@@ -1683,7 +1683,30 @@ function addNotice() {
 
   };
 
+  const { error } = await supabase
+    .from("notices")
+    .insert({
+      title: title,
+      content: content,
+      range: selectedRange,
+      class_name:
+        selectedRange === "全校"
+        ? null
+        : selectedClass,
+      subject:
+        selectedRange === "全校"
+        ? null
+        : selectedSubject,
+      type: type,
+      deadline: deadline || null,
+      posted_at: newNotice.postedAt
+    });
 
+  if (error) {
+    console.error(error);
+    alert("保存に失敗しました！");
+    return;
+  }
   notices.unshift(
     newNotice
   );
